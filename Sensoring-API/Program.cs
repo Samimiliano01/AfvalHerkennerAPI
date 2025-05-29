@@ -21,6 +21,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<LitterDbContext>()
     .AddDefaultTokenProviders();
 
+
 // Configure Database Context with SQL Server connection string
 var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
 if (string.IsNullOrWhiteSpace(connectionString))

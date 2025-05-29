@@ -7,7 +7,7 @@ namespace Sensoring_API.Controllers;
 
 [Authorize]                               // Require authorization for all endpoints in this controller
 [ApiController]                           // Enable API-specific features like automatic model validation
-[Route("[Litter]")]                      // Route prefix for this controller (endpoint path will start with /Litter)
+[Route("Litter")]                      // Route prefix for this controller (endpoint path will start with /Litter)
 public class LitterController(ILitterRepository litterRepository) : ControllerBase
 {
     [Authorize(Roles = "Admin")]         // Only Admin role can access this POST endpoint
