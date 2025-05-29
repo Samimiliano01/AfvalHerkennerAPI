@@ -32,7 +32,7 @@ public class LitterController(ILitterRepository litterRepository) : ControllerBa
         try
         {
             var result = await litterRepository.Read();         // Retrieve all litter records from repo
-            if (result == null || result.Count == 0)            // Check if no records found
+            if (result == null)            // Check if no records found
             {
                 return NotFound("No litter records found.");    // Return 404 with message if empty
             }

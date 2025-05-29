@@ -10,7 +10,7 @@ namespace Sensoring_API.Controllers;
 public class AdminController(UserManager<IdentityUser> userManager) : ControllerBase
 {
     [HttpPost]                            // Handles HTTP POST requests to promote a user to Admin role
-    public async Task<IActionResult> Admin([FromQuery] string email)
+    public async Task<IActionResult> Create([FromQuery] string email)
     {
         var user = await userManager.FindByEmailAsync(email);  // Find user by email
 
@@ -19,9 +19,9 @@ public class AdminController(UserManager<IdentityUser> userManager) : Controller
             return NotFound($"No user found with email: {email}");  // Return 404 Not Found
         }
 
-        var alreadyIsAdmin = await userManager.IsInRoleAsync(user, "Admin");  // Check if user already Admin
+        var isAdmin = await userManager.IsInRoleAsync(user, "Admin");  // Check if user already Admin
 
-        if (alreadyIsAdmin)              // If user is already an admin
+        if (isAdmin)              // If user is already an admin
         {
             return BadRequest("User is already an admin.");     // Return 400 Bad Request
         }
@@ -31,10 +31,43 @@ public class AdminController(UserManager<IdentityUser> userManager) : Controller
         if (result.Succeeded)            // If adding role succeeded
         {
             return Ok($"User {email} promoted to Admin.");  // Return success message
-        }
-        else                            // If adding role failed
+        } 
+        
+        // If adding role failed
+        return BadRequest("Failed to assign admin role.");  // Return failure message
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Delete([FromQuery] string email)
+    {
+        // Find the user by email
+        var user = await userManager.FindByEmailAsync(email);
+
+        // Return 404 if the user does not exist
+        if (user == null)
         {
-            return BadRequest("Failed to assign admin role.");  // Return failure message
+            return NotFound($"No user found with email: {email}");
         }
+    
+        // Check if the user is currently in the Admin role
+        var isAdmin = await userManager.IsInRoleAsync(user, "Admin");
+    
+        // Return 400 if the user is not an admin
+        if (!isAdmin)
+        {
+            return BadRequest("User is not an admin.");
+        }
+    
+        // Attempt to remove the Admin role
+        var result = await userManager.RemoveFromRoleAsync(user, "Admin");
+
+        // Return 200 if successful
+        if (result.Succeeded)
+        {
+            return Ok($"User {email} downgraded to user.");
+        }
+    
+        // Return 400 if removal failed
+        return BadRequest("Failed to remove admin role.");
     }
 }
