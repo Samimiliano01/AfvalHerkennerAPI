@@ -31,7 +31,12 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddDbContext<LitterDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Build Application
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080);
+});
+
 
 var app = builder.Build();
 
@@ -45,7 +50,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Redirect HTTP requests to HTTPS for security
-app.UseHttpsRedirection();
+//todo app.UseHttpsRedirection();
 
 // Add Authentication and Authorization middleware
 app.UseAuthentication();
@@ -53,6 +58,7 @@ app.UseAuthorization();
 
 // Map controller routes to endpoints
 app.MapControllers();
+
 
 // Seed Default Roles and Admin User
 using (var scope = app.Services.CreateScope())
