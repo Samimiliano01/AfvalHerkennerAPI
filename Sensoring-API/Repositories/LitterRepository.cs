@@ -27,7 +27,7 @@ public class LitterRepository : ILitterRepository
             Time = litterCreateDto.Time
         };
         
-        await _context.litters.AddAsync(litter);  // Add new entity to the DbSet asynchronously
+        await _context.Litter.AddAsync(litter);  // Add new entity to the DbSet asynchronously
         await _context.SaveChangesAsync();        // Persist changes to the database
     }
 
@@ -35,7 +35,7 @@ public class LitterRepository : ILitterRepository
     public async Task<List<LitterReadDto>> Read()
     {
         // Project each Litter entity to a LitterReadDto and return as a list asynchronously
-        return await _context.litters.Select(
+        return await _context.Litter.Select(
             l => new LitterReadDto
             {
                 Id = l.Id,
@@ -49,14 +49,14 @@ public class LitterRepository : ILitterRepository
     // Delete a litter record by its ID
     public async Task Delete(int id)
     {
-        var litter = await _context.litters.FindAsync(id);  // Find entity by primary key
+        var litter = await _context.Litter.FindAsync(id);  // Find entity by primary key
 
         if (litter == null)                                  // If not found, throw an exception
         {
             throw new KeyNotFoundException($"Litter with ID {id} not found.");
         }
         
-        _context.litters.Remove(litter);                     // Remove entity from DbSet
+        _context.Litter.Remove(litter);                     // Remove entity from DbSet
         await _context.SaveChangesAsync();                   // Save changes to the database
     }
 }

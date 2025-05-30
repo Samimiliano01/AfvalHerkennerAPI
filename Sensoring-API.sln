@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensoring-API", "Sensoring-API\Sensoring-API.csproj", "{7C34D48C-5D5A-4546-B302-7D63119FABA2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensoring-API_Test", "Sensoring-API_Test\Sensoring-API_Test.csproj", "{1DB01E99-0386-4A41-8E9B-C8F8CFF01F17}"

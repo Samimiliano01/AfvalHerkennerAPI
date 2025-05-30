@@ -13,6 +13,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configure Identity with EF Core stores and token providers
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<LitterDbContext>()
+    .AddDefaultTokenProviders();
+
 // Configure Database Context with SQL Server connection string
 var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
 if (string.IsNullOrWhiteSpace(connectionString))
@@ -22,33 +27,32 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddDbContext<LitterDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Configure Identity with EF Core stores and token providers
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<LitterDbContext>()
-    .AddDefaultTokenProviders();
 
-// Add Identity API endpoints support
-builder.Services.AddIdentityApiEndpoints<IdentityUser>();
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080);
+});
 
-// Add Authentication and Authorization services
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 // Configure Middleware Pipeline
 
+// Enable Swagger UI only in Development environment
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Redirect HTTP requests to HTTPS for security
+//todo app.UseHttpsRedirection();
 
+// Add Authentication and Authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map controller routes to endpoints
 app.MapControllers();
 
 // ✅ Enable Identity API endpoints like /register, /login, etc.
@@ -62,30 +66,38 @@ using (var scope = app.Services.CreateScope())
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
 
+    // Create "Admin" role if it doesn't exist
     if (!await roleManager.RoleExistsAsync("Admin"))
     {
         await roleManager.CreateAsync(new IdentityRole("Admin"));
     }
 
+    // Create "User" role if it doesn't exist
     if (!await roleManager.RoleExistsAsync("User"))
     {
         await roleManager.CreateAsync(new IdentityRole("User"));
     }
 
+    // Define admin user credentials (change to your desired email/password)
     var adminEmail = "testtest@test.com";
     var adminPassword = "test123password";
 
+    // Check if admin user exists
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
     if (adminUser == null)
     {
+        // Create new admin user
         var user = new IdentityUser { UserName = adminEmail, Email = adminEmail };
         var result = await userManager.CreateAsync(user, adminPassword);
 
+        // Assign "Admin" role if user creation succeeded
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(user, "Admin");
         }
     }
 }
+
+// Run the Application
 
 app.Run();
