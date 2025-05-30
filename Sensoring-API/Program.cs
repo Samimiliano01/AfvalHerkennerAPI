@@ -13,7 +13,7 @@ builder.Services.AddControllers();
 // Add Swagger/OpenAPI for API testing/documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IEmailSender<IdentityUser>, MockEmailSender>();
+builder.Services.AddSingleton<IEmailSender<IdentityUser>, MockEmailSender>();
 // Configure Identity with EF Core stores and token providers
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<LitterDbContext>()
@@ -47,7 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Redirect HTTP requests to HTTPS for security
-//todo app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 // Add Authentication and Authorization middleware
 app.UseAuthentication();
