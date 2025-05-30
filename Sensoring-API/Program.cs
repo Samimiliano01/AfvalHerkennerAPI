@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sensoring_API.Data;
+using Sensoring_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,18 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add MVC controllers support
 builder.Services.AddControllers();
 
-// Add Authentication services (used by Identity)
-builder.Services.AddAuthentication();
-
-// Add Swagger/OpenAPI generation (API documentation and testing UI)
+// Add Swagger/OpenAPI for API testing/documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddScoped<IEmailSender<IdentityUser>, MockEmailSender>();
 // Configure Identity with EF Core stores and token providers
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<LitterDbContext>()
     .AddDefaultTokenProviders();
-
 
 // Configure Database Context with SQL Server connection string
 var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
@@ -31,7 +28,12 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddDbContext<LitterDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Build Application
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080);
+});
+
 
 var app = builder.Build();
 
@@ -45,7 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Redirect HTTP requests to HTTPS for security
-app.UseHttpsRedirection();
+//todo app.UseHttpsRedirection();
 
 // Add Authentication and Authorization middleware
 app.UseAuthentication();
@@ -54,7 +56,10 @@ app.UseAuthorization();
 // Map controller routes to endpoints
 app.MapControllers();
 
-// Seed Default Roles and Admin User
+// ✅ Enable Identity API endpoints like /register, /login, etc.
+app.MapGroup("/account").MapIdentityApi<IdentityUser>();
+
+// Optional: Seed default roles and admin user
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
