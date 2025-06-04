@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sensoring_API.Data;
+using Sensoring_API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<ILitterRepository, LitterRepository>();
 builder.Services.AddSwaggerGen();
 
 // Configure Database Context with SQL Server connection string
@@ -25,7 +28,14 @@ builder.Services.AddDbContext<LitterDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<LitterDbContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<LitterDbContext>()
+    .AddDefaultTokenProviders();
+
+// builder.Services.Configure<IdentityOptions>(options =>
+// {
+//     options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
+// });
 
 var app = builder.Build();
 
