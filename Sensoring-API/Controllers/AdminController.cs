@@ -10,7 +10,7 @@ namespace Sensoring_API.Controllers;
 public class AdminController(UserManager<IdentityUser> userManager) : ControllerBase
 {
     [HttpPost]                            // Handles HTTP POST requests to promote a user to Admin role
-    public async Task<IActionResult> Create([FromQuery] string email)
+    public async Task<IActionResult> Create([FromBody] string email)
     {
         var user = await userManager.FindByEmailAsync(email);  // Find user by email
 
@@ -38,7 +38,7 @@ public class AdminController(UserManager<IdentityUser> userManager) : Controller
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete([FromQuery] string email)
+    public async Task<IActionResult> Delete([FromBody] string email)
     {
         // Find the user by email
         var user = await userManager.FindByEmailAsync(email);

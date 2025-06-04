@@ -5,7 +5,7 @@ using Sensoring_API.Models;                // For accessing the Litter model cla
 
 namespace Sensoring_API.Data;
 
-public class LitterDbContext(DbContextOptions<LitterDbContext> options) : IdentityDbContext<IdentityUser, IdentityRole, string>(options)
+public class LitterDbContext(DbContextOptions<LitterDbContext> options) : IdentityDbContext(options)
 {
     // Constructor that accepts DbContext options and passes them to the base DbContext
 

@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.Authorization;  // For authentication and authorization attributes
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity; // For authentication and authorization attributes
 using Microsoft.AspNetCore.Mvc;             // For controller base and HTTP action results
 using Sensoring_API.Dto;                    // Data Transfer Objects used in API requests/responses
 using Sensoring_API.Repositories;           // Repository interfaces and implementations
@@ -8,7 +9,7 @@ namespace Sensoring_API.Controllers;
 [Authorize]                               // Require authorization for all endpoints in this controller
 [ApiController]                           // Enable API-specific features like automatic model validation
 [Route("Litter")]                      // Route prefix for this controller (endpoint path will start with /Litter)
-public class LitterController(ILitterRepository litterRepository) : ControllerBase
+public class LitterController(ILitterRepository litterRepository, UserManager<IdentityUser> userManager) : ControllerBase
 {
     [Authorize(Roles = "Admin")]         // Only Admin role can access this POST endpoint
     [HttpPost]                          // Handles HTTP POST requests to create a litter record
@@ -31,6 +32,11 @@ public class LitterController(ILitterRepository litterRepository) : ControllerBa
     {
         try
         {
+            var list = await userManager.GetRolesAsync(await userManager.GetUserAsync(User));
+            foreach (var se in list)
+            {
+                Console.WriteLine(se);
+            }
             var result = await litterRepository.Read();         // Retrieve all litter records from repo
             if (result == null)            // Check if no records found
             {
