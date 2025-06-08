@@ -6,7 +6,7 @@ namespace Sensoring_API.Controllers;
 
 [Authorize(Roles = "Admin")]                // Only users in the Admin role can access this controller
 [ApiController]                            // Enables API-specific behaviors like automatic model validation
-[Route("admin")]                          // Route prefix: all endpoints start with /admin
+[Route("admins")]                          // Route prefix: all endpoints start with /admin
 public class AdminController(UserManager<IdentityUser> userManager) : ControllerBase
 {
     [HttpPost]                            // Handles HTTP POST requests to promote a user to Admin role
