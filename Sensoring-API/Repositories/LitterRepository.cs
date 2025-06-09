@@ -21,7 +21,7 @@ public class LitterRepository : ILitterRepository
         // Map DTO properties to the Litter entity
         Litter litter = new Litter
         {
-            TypeOfTrash = litterCreateDto.Category,
+            TypeOfTrash = litterCreateDto.TypeOfTrash,
             Location = litterCreateDto.Location,
             Coordinates = litterCreateDto.Coordinates,
             Time = litterCreateDto.Time
