@@ -1,12 +1,22 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Sensoring_API.ApiKeyAuth;
 using Sensoring_API.Data;
 using Sensoring_API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Register Services
+
+// Api Key Authorization
+builder.Services.AddTransient<IApiKeyValidation, AdminKeyValidation>();
+builder.Services.AddTransient<IApiKeyValidation, UserKeyValidation>();
+builder.Services.AddScoped<AdminKeyAuthFilter>();
+builder.Services.AddScoped<UserKeyAuthFilter>();
+
+
+builder.Services.AddHttpContextAccessor();
 
 // Add MVC controllers support
 builder.Services.AddControllers();

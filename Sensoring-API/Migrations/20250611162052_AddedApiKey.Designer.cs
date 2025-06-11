@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sensoring_API.Data;
 
@@ -11,9 +12,11 @@ using Sensoring_API.Data;
 namespace Sensoring_API.Migrations
 {
     [DbContext(typeof(LitterDbContext))]
-    partial class LitterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250611162052_AddedApiKey")]
+    partial class AddedApiKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
