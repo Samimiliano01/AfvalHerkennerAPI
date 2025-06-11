@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.ObjectPool;
 using Sensoring_API.Data;
+using Sensoring_API.Util; 
 
 namespace Sensoring_API.ApiKeyAuth
 {
@@ -21,7 +22,7 @@ namespace Sensoring_API.ApiKeyAuth
             }
 
             //var apiKey = _configuration.GetValue<string>(Constants.ApiKeyName);
-            var apiKeyFromDb = await _context.ApiKey.FindAsync(userApiKey);
+            var apiKeyFromDb = await _context.ApiKey.FindAsync(Util.HashWithSHA256(userApiKey));
 
             if (apiKeyFromDb == null)
             {
