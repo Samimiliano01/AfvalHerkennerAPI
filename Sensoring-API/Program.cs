@@ -10,8 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Register Services
 
 // Api Key Authorization
-builder.Services.AddTransient<IApiKeyValidation, ApiKeyValidation>();
-builder.Services.AddScoped<ApiKeyAuthFilter>();
+builder.Services.AddTransient<IApiKeyValidation, AdminKeyValidation>();
+builder.Services.AddTransient<IApiKeyValidation, UserKeyValidation>();
+builder.Services.AddScoped<AdminKeyAuthFilter>();
+builder.Services.AddScoped<UserKeyAuthFilter>();
+
 
 builder.Services.AddHttpContextAccessor();
 
