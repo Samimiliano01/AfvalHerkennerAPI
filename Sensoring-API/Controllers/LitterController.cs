@@ -12,7 +12,7 @@ namespace Sensoring_API.Controllers;
 public class LitterController(ILitterRepository litterRepository, UserManager<IdentityUser> userManager) : ControllerBase
 {
     //[Authorize(Roles = "Admin")]         // Only Admin role can access this POST endpoint
-    [ApiKey]
+    [AdminApiKey]
     [HttpPost]                          // Handles HTTP POST requests to create a litter record
     public async Task<ActionResult> Create(LitterCreateDto litterCreateDto)
     {
@@ -29,7 +29,7 @@ public class LitterController(ILitterRepository litterRepository, UserManager<Id
     }
 
     [HttpGet] // Handles HTTP GET requests to read all litter records
-    [ApiKey]
+    [UserApiKey]
     public async Task<ActionResult<LitterReadDto>> Read([FromQuery] int? id, [FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string trashType)
     {
         try
@@ -75,7 +75,7 @@ public class LitterController(ILitterRepository litterRepository, UserManager<Id
     }
     
     //[Authorize(Roles = "Admin")]       // Only Admin role can access this DELETE endpoint
-    [ApiKey]
+    [AdminApiKey]
     [HttpDelete]                      // Handles HTTP DELETE requests to delete a litter record by ID
     public async Task<ActionResult> Delete([FromQuery] int id)
     {
@@ -98,13 +98,5 @@ public class LitterController(ILitterRepository litterRepository, UserManager<Id
             // Return HTTP 500 with error message on failure
             return StatusCode(500, $"An error occurred while deleting litter: {ex.Message}");
         }
-    }
-
-    [HttpGet]
-    [Route("/test")]
-    [ApiKey]
-    public IActionResult Get()
-    {
-        return Ok();
     }
 }

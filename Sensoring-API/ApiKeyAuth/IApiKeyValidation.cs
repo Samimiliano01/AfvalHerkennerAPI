@@ -2,6 +2,6 @@
 {
     public interface IApiKeyValidation
     {
-        bool IsValidApiKey(string userApiKey);
+        Task<bool> IsValidApiKeyAsync(string userApiKey);
     }
 }

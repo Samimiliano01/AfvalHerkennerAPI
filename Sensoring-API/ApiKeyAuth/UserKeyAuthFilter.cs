@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Sensoring_API.Data;
 
 namespace Sensoring_API.ApiKeyAuth
 {
-    public class ApiKeyAuthFilter : IAuthorizationFilter
+    public class UserKeyAuthFilter : IAuthorizationFilter
     {
         private readonly IApiKeyValidation _apiKeyValidation;
 
-        public ApiKeyAuthFilter(IApiKeyValidation apiKeyValidation)
+        public UserKeyAuthFilter(IApiKeyValidation apiKeyValidation)
         {
             _apiKeyValidation = apiKeyValidation;
         }
@@ -23,7 +23,7 @@ namespace Sensoring_API.ApiKeyAuth
                 return;
             }
 
-            if (!_apiKeyValidation.IsValidApiKey(userApiKey)) 
+            if (!_apiKeyValidation.IsValidApiKeyAsync(userApiKey).Result)
             {
                 context.Result = new UnauthorizedResult();
             }
