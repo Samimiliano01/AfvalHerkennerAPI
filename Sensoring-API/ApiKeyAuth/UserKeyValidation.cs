@@ -1,40 +1,20 @@
-﻿using System.Text;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Microsoft.Extensions.ObjectPool;
+﻿
 using Sensoring_API.Data;
-using Sensoring_API.Util; 
 
-namespace Sensoring_API.ApiKeyAuth
+namespace Sensoring_API.ApiKeyAuth;
+
+public class UserKeyValidation(LitterDbContext context) : IApiKeyValidation
 {
-    public class UserKeyValidation : IApiKeyValidation
+    public async Task<bool> IsValidApiKeyAsync(string userApiKey)
     {
-        private readonly LitterDbContext _context;
-
-        public UserKeyValidation(LitterDbContext context)
+        if (string.IsNullOrEmpty(userApiKey))
         {
-            _context = context;
-        }
-        public async Task<bool> IsValidApiKeyAsync(string userApiKey)
-        {
-            if (string.IsNullOrEmpty(userApiKey))
-            {
-                return false;
-            }
-
-            //var apiKey = _configuration.GetValue<string>(Constants.ApiKeyName);
-            var apiKeyFromDb = await _context.ApiKey.FindAsync(Util.HashWithSHA256(userApiKey));
-
-            if (apiKeyFromDb == null)
-            {
-                return false;
-            }
-
-            if (apiKeyFromDb.Role == "Admin" || apiKeyFromDb.Role == "User")
-            {
-                return true;
-            }
-
             return false;
         }
+
+        //var apiKey = _configuration.GetValue<string>(Constants.ApiKeyName);
+        var apiKeyFromDb = await context.ApiKey.FindAsync(Util.HashWithSha256(userApiKey));
+
+        return apiKeyFromDb?.Role is "Admin" or "User";
     }
 }

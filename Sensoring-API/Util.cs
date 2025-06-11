@@ -1,12 +1,14 @@
-public class Program
+﻿using System.Security.Cryptography;
+using System.Text;
+
+namespace Sensoring_API;
+
+public static class Util
 {
-    public static string HashWithSHA256(string input)
+    public static string HashWithSha256(string input)
     {
-        using (SHA256 sha256 = SHA256.Create())
-        {
-            byte[] bytes = Encoding.UTF8.GetBytes(input);
-            byte[] hash = sha256.ComputeHash(bytes);
-            return BitConverter.ToString(hash).Replace("-", "").ToLower();
-        }
+        var bytes = Encoding.UTF8.GetBytes(input);
+        var hash = SHA256.HashData(bytes);
+        return BitConverter.ToString(hash).Replace("-", "").ToLower();
     }
 }
