@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.Authorization;  // For authentication and authorization attributes
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity; // For authentication and authorization attributes
 using Microsoft.AspNetCore.Mvc;             // For controller base and HTTP action results
 using Sensoring_API.Dto;                    // Data Transfer Objects used in API requests/responses
 using Sensoring_API.Repositories;           // Repository interfaces and implementations
@@ -7,8 +8,8 @@ namespace Sensoring_API.Controllers;
 
 [Authorize]                               // Require authorization for all endpoints in this controller
 [ApiController]                           // Enable API-specific features like automatic model validation
-[Route("Litter")]                      // Route prefix for this controller (endpoint path will start with /Litter)
-public class LitterController(ILitterRepository litterRepository) : ControllerBase
+[Route("litters")]                      // Route prefix for this controller (endpoint path will start with /Litter)
+public class LitterController(ILitterRepository litterRepository, UserManager<IdentityUser> userManager) : ControllerBase
 {
     [Authorize(Roles = "Admin")]         // Only Admin role can access this POST endpoint
     [HttpPost]                          // Handles HTTP POST requests to create a litter record
@@ -25,17 +26,43 @@ public class LitterController(ILitterRepository litterRepository) : ControllerBa
             return StatusCode(500, $"An error occurred while creating litter: {ex.Message}");
         }
     }
-    
-    [HttpGet]                          // Handles HTTP GET requests to read all litter records
-    public async Task<ActionResult<LitterReadDto>> Read()
+
+    [HttpGet] // Handles HTTP GET requests to read all litter records
+    public async Task<ActionResult<LitterReadDto>> Read([FromQuery] int? id, [FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string trashType)
     {
         try
         {
-            var result = await litterRepository.Read();         // Retrieve all litter records from repo
+            var list = await userManager.GetRolesAsync(await userManager.GetUserAsync(User));
+            foreach (var se in list)
+            {
+                Console.WriteLine(se);
+            }
+            var result = (await litterRepository.Read())?.AsEnumerable();         // Retrieve all litter records from repo
             if (result == null)            // Check if no records found
             {
                 return NotFound("No litter records found.");    // Return 404 with message if empty
             }
+
+            if (id != null)
+            {
+                result = result.Where(l => l.Id > id);  // Filter by ID if provided
+            }
+
+            if (from != null)
+            {
+                result = result.Where(l => l.Time >= from);  // Filter by start date if provided
+            }
+            
+            if (to != null)
+            {
+                result = result.Where(l => l.Time <= to);  // Filter by end date if provided
+            }
+            
+            if (!string.IsNullOrEmpty(trashType))
+            {
+                result = result.Where(l => l.TypeOfTrash.Equals(trashType, StringComparison.OrdinalIgnoreCase));  // Filter by trash type if provided
+            }
+            
             return Ok(result);                                    // Return the list of litter records as JSON
         }
         catch (Exception ex)              // Catch any unexpected errors during retrieval
