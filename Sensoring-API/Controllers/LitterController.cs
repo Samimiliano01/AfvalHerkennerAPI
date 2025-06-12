@@ -1,17 +1,19 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity; // For authentication and authorization attributes
-using Microsoft.AspNetCore.Mvc;             // For controller base and HTTP action results
+using Microsoft.AspNetCore.Mvc;
 using Sensoring_API.ApiKeyAuth;
-using Sensoring_API.Dto;                    // Data Transfer Objects used in API requests/responses
-using Sensoring_API.Repositories;           // Repository interfaces and implementations
+using Sensoring_API.Dto;
+using Sensoring_API.Repositories;
+// For authentication and authorization attributes
+// For controller base and HTTP action results
+// Data Transfer Objects used in API requests/responses
+
+// Repository interfaces and implementations
 
 namespace Sensoring_API.Controllers;
 
 [ApiController]                           // Enable API-specific features like automatic model validation
 [Route("litters")]                      // Route prefix for this controller (endpoint path will start with /Litter)
-public class LitterController(ILitterRepository litterRepository, UserManager<IdentityUser> userManager) : ControllerBase
+public class LitterController(ILitterRepository litterRepository) : ControllerBase
 {
-    //[Authorize(Roles = "Admin")]         // Only Admin role can access this POST endpoint
     [AdminApiKey]
     [HttpPost]                          // Handles HTTP POST requests to create a litter record
     public async Task<ActionResult> Create(LitterCreateDto litterCreateDto)
@@ -30,15 +32,10 @@ public class LitterController(ILitterRepository litterRepository, UserManager<Id
 
     [HttpGet] // Handles HTTP GET requests to read all litter records
     [UserApiKey]
-    public async Task<ActionResult<LitterReadDto>> Read([FromQuery] int? id, [FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string trashType)
+    public async Task<ActionResult<LitterReadDto>> Read([FromQuery] int? id, [FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string? trashType)
     {
         try
         {
-            var list = await userManager.GetRolesAsync(await userManager.GetUserAsync(User));
-            foreach (var se in list)
-            {
-                Console.WriteLine(se);
-            }
             var result = (await litterRepository.Read())?.AsEnumerable();         // Retrieve all litter records from repo
             if (result == null)            // Check if no records found
             {
@@ -74,7 +71,6 @@ public class LitterController(ILitterRepository litterRepository, UserManager<Id
         }
     }
     
-    //[Authorize(Roles = "Admin")]       // Only Admin role can access this DELETE endpoint
     [AdminApiKey]
     [HttpDelete]                      // Handles HTTP DELETE requests to delete a litter record by ID
     public async Task<ActionResult> Delete([FromQuery] int id)
