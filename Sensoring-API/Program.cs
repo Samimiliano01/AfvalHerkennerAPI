@@ -37,15 +37,6 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddDbContext<LitterDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<LitterDbContext>()
-    .AddDefaultTokenProviders();
-
-// builder.Services.Configure<IdentityOptions>(options =>
-// {
-//     options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
-// });
 
 var app = builder.Build();
 
@@ -62,14 +53,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Add Authentication and Authorization middleware
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 // Map controller routes to endpoints
 app.MapControllers();
-
-// ✅ Enable Identity API endpoints like /register, /login, etc.
-app.MapGroup("/account").MapIdentityApi<IdentityUser>().AllowAnonymous();
 
 // Run the Application
 

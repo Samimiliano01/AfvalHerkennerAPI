@@ -18,7 +18,7 @@ namespace Sensoring_API.ApiKeyAuth
             var userApiKey = context.HttpContext.Request.Headers[Constants.ApiKeyHeaderName];
             if (string.IsNullOrEmpty(userApiKey))
             {
-                context.Result = new BadRequestResult();
+                context.Result = new UnauthorizedResult();
 
                 return;
             }
