@@ -44,7 +44,7 @@ jobs:
     - name: Build Docker Image
       run: |
         IMAGE_TAG=${ACR_NAME}.azurecr.io/${DOCKER_IMAGE_NAME}:${{ github.sha }}
-        docker build -f Sensoring-API/Dockerfile -t $IMAGE_TAG Sensoring-API
+        docker build -f Sensoring-API/Dockerfile -t $IMAGE_TAG .
 
     - name: Push Docker Image to ACR
       run: |
