@@ -46,7 +46,7 @@ jobs:
         run: |
           dotnet tool install --global dotnet-ef --version 8.0.0
           export PATH="$PATH:$HOME/.dotnet/tools"
-          dotnet ef database update --project Sensoring-API/Sensoring-API.csproj
+          dotnet ef database update --project Sensoring-API.csproj
 
 
   deploy:
