@@ -43,16 +43,20 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        IMAGE_TAG=${ACR_NAME}.azurecr.io/${DOCKER_IMAGE_NAME}:${{ github.sha }}
+        IMAGE_TAG=${{ env.ACR_NAME }}.azurecr.io/${{ env.DOCKER_IMAGE_NAME }}:latest
         docker build -f Sensoring-API/Dockerfile -t $IMAGE_TAG .
-
+    
     - name: Push Docker Image to ACR
       run: |
-        IMAGE_TAG=${ACR_NAME}.azurecr.io/${DOCKER_IMAGE_NAME}:${{ github.sha }}
+        IMAGE_TAG=${{ env.ACR_NAME }}.azurecr.io/${{ env.DOCKER_IMAGE_NAME }}:latest
         docker push $IMAGE_TAG
 
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+
+    - name: Deploy to Azure Container App
+      run: |
+        az containerapp update \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --image ${{ env.ACR_NAME }}.azurecr.io/${{ env.DOCKER_IMAGE_NAME }}:latest \
+          --set-env-vars DEPLOY_TIMESTAMP=$(date +%s)
+
