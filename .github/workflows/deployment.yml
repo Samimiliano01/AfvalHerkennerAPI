@@ -25,9 +25,23 @@ jobs:
     - name: Run Tests
       run: dotnet test --verbosity normal
 
-  deploy:
+  migrate:
     runs-on: ubuntu-latest
     needs: build
+
+    steps:
+      - name: Run EF Core Migrations
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_DB_CONNECTION_STRING }}
+        run: |
+          dotnet tool install --global dotnet-ef --version 8.0.0
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet ef database update --project Sensoring-API/Sensoring-API.csproj
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: migrate
 
     steps:
     - name: Checkout code
