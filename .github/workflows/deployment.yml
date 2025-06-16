@@ -30,6 +30,9 @@ jobs:
     needs: build
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Log in to Azure
       uses: azure/login@v1
       with:
@@ -38,10 +41,10 @@ jobs:
     - name: Log in to Azure Container Registry
       run: az acr login --name $ACR_NAME
 
-    - name: Build Docker Image using Makefile
+    - name: Build Docker Image
       run: |
         IMAGE_TAG=${ACR_NAME}.azurecr.io/${DOCKER_IMAGE_NAME}:${{ github.sha }}
-        make docker-build IMAGE=$IMAGE_TAG
+        docker build -t $IMAGE_TAG .
 
     - name: Push Docker Image to ACR
       run: |
