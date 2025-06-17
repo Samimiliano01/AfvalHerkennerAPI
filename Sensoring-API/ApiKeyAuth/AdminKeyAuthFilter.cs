@@ -6,9 +6,9 @@ namespace Sensoring_API.ApiKeyAuth
 {
     public class AdminKeyAuthFilter : IAuthorizationFilter
     {
-        private readonly IApiKeyValidation _adminKeyValidation;
+        private readonly AdminKeyValidation _adminKeyValidation;
 
-        public AdminKeyAuthFilter(IApiKeyValidation apiKeyValidation)
+        public AdminKeyAuthFilter(AdminKeyValidation apiKeyValidation)
         {
             _adminKeyValidation = apiKeyValidation;
         }
