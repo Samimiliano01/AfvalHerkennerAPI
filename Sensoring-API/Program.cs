@@ -10,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Register Services
 
 // Api Key Authorization
-builder.Services.AddTransient<IApiKeyValidation, AdminKeyValidation>();
-builder.Services.AddTransient<IApiKeyValidation, UserKeyValidation>();
+builder.Services.AddTransient<AdminKeyValidation>();
+builder.Services.AddTransient<UserKeyValidation>();
 builder.Services.AddScoped<AdminKeyAuthFilter>();
 builder.Services.AddScoped<UserKeyAuthFilter>();
 

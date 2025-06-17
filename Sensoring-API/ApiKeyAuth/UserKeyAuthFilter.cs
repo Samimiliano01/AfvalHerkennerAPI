@@ -6,9 +6,9 @@ namespace Sensoring_API.ApiKeyAuth
 {
     public class UserKeyAuthFilter : IAuthorizationFilter
     {
-        private readonly IApiKeyValidation _apiKeyValidation;
+        private readonly UserKeyValidation _apiKeyValidation;
 
-        public UserKeyAuthFilter(IApiKeyValidation apiKeyValidation)
+        public UserKeyAuthFilter(UserKeyValidation apiKeyValidation)
         {
             _apiKeyValidation = apiKeyValidation;
         }
