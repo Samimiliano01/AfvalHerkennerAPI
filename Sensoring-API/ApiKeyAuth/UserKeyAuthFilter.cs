@@ -16,7 +16,7 @@ namespace Sensoring_API.ApiKeyAuth;
 /// This filter should be registered in the service container and used within controllers
 /// to ensure user-specific API key authentication.
 /// </example>
-public class UserKeyAuthFilter(IApiKeyValidation apiKeyValidation) : IAuthorizationFilter
+public class UserKeyAuthFilter(UserKeyValidation apiKeyValidation) : IAuthorizationFilter
 {
     /// <summary>
     /// Executes the authorization logic by validating the API key from the request headers.
