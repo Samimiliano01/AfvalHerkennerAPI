@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sensoring_API.ApiKeyAuth;
 using Sensoring_API.Data;
@@ -56,13 +54,8 @@ if (app.Environment.IsDevelopment())
 // Redirect HTTP requests to HTTPS for security
 app.UseHttpsRedirection();
 
-// Add Authentication and Authorization middleware
-// app.UseAuthentication();
-// app.UseAuthorization();
-
 // Map controller routes to endpoints
 app.MapControllers();
 
 // Run the Application
-
 app.Run();

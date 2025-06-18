@@ -5,58 +5,53 @@ using Sensoring_API.Models;                // The Litter entity model
 
 namespace Sensoring_API.Repositories;
 
-public class LitterRepository : ILitterRepository
+/// <summary>
+/// Provides methods to interact with the database for managing litter-related data.
+/// </summary>
+public class LitterRepository(LitterDbContext context) : ILitterRepository
 {
-    private readonly LitterDbContext _context;   // EF Core database context for accessing the database
-
-    // Constructor injects the database context
-    public LitterRepository(LitterDbContext context)
-    {
-        _context = context;
-    }
-    
-    // Create a new litter record from DTO and save it to the database
+    /// <summary>
+    /// Creates a new litter entry and persists it to the database.
+    /// </summary>
+    /// <param name="litterCreateDto">An object containing the details of the litter to be created, including type of trash, location, coordinates, and time.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task Create(LitterCreateDto litterCreateDto)
     {
-        // Map DTO properties to the Litter entity
-        Litter litter = new Litter
-        {
-            TypeOfTrash = litterCreateDto.TypeOfTrash,
-            Location = litterCreateDto.Location,
-            Coordinates = litterCreateDto.Coordinates,
-            Time = litterCreateDto.Time
-        };
-        
-        await _context.Litter.AddAsync(litter);  // Add new entity to the DbSet asynchronously
-        await _context.SaveChangesAsync();        // Persist changes to the database
+        // Save the entity to the database
+        await context.Litter.AddAsync(litterCreateDto.CreateLitter());
+        await context.SaveChangesAsync();
     }
 
-    // Read all litter records and convert them to Read DTOs
+
+    /// <summary>
+    /// Retrieves all litter entries from the database and projects them into a list of LitterReadDto objects.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation. The task result contains a list of LitterReadDto objects, each representing a litter entry with details such as type of trash, location, coordinates, and time.</returns>
     public async Task<List<LitterReadDto>> Read()
     {
         // Project each Litter entity to a LitterReadDto and return as a list asynchronously
-        return await _context.Litter.Select(
-            l => new LitterReadDto
-            {
-                Id = l.Id,
-                TypeOfTrash = l.TypeOfTrash,
-                Location = l.Location,
-                Coordinates = l.Coordinates,
-                Time = l.Time
-            }).ToListAsync();
+        return await context.Litter.Select(litter => new LitterReadDto(litter)).ToListAsync();
     }
 
-    // Delete a litter record by its ID
+
+    /// <summary>
+    /// Deletes a litter entry from the database based on the provided ID.
+    /// </summary>
+    /// <param name="id">The unique identifier of the litter entry to be deleted.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
     public async Task Delete(int id)
     {
-        var litter = await _context.Litter.FindAsync(id);  // Find entity by primary key
+        // Find the litter entry by id
+        var litter = await context.Litter.FindAsync(id);
 
-        if (litter == null)                                  // If not found, throw an exception
+        // The key must be present
+        if (litter == null)
         {
             throw new KeyNotFoundException($"Litter with ID {id} not found.");
         }
         
-        _context.Litter.Remove(litter);                     // Remove entity from DbSet
-        await _context.SaveChangesAsync();                   // Save changes to the database
+        // Removes the entity from the database
+        context.Litter.Remove(litter);
+        await context.SaveChangesAsync();
     }
 }

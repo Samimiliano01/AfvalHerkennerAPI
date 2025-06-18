@@ -1,32 +1,44 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Sensoring_API.Data;
 
-namespace Sensoring_API.ApiKeyAuth
+namespace Sensoring_API.ApiKeyAuth;
+
+/// <summary>
+/// Implements an API key-based authorization filter for user-level validation.
+/// </summary>
+/// <remarks>
+/// This class checks whether a valid API key is provided in the request header specified by the
+/// constant <c>ApiKeyHeaderName</c>. If the API key is missing or invalid, the request is rejected
+/// with an HTTP 401 Unauthorized response. The validation of the API key is delegated to an
+/// <see cref="IApiKeyValidation" /> implementation.
+/// </remarks>
+/// <example>
+/// This filter should be registered in the service container and used within controllers
+/// to ensure user-specific API key authentication.
+/// </example>
+public class UserKeyAuthFilter(UserKeyValidation apiKeyValidation) : IAuthorizationFilter
 {
-    public class UserKeyAuthFilter : IAuthorizationFilter
+    /// <summary>
+    /// Executes the authorization logic by validating the API key from the request headers.
+    /// </summary>
+    /// <param name="context">
+    /// The <see cref="AuthorizationFilterContext"/> containing the HTTP context and filter metadata,
+    /// used to perform the authorization logic. If the API key is missing or invalid, the context result
+    /// is set to <see cref="UnauthorizedResult"/>.
+    /// </param>
+    public void OnAuthorization(AuthorizationFilterContext context)
     {
-        private readonly UserKeyValidation _apiKeyValidation;
-
-        public UserKeyAuthFilter(UserKeyValidation apiKeyValidation)
+        var userApiKey = context.HttpContext.Request.Headers[Constants.ApiKeyHeaderName];
+        if (string.IsNullOrEmpty(userApiKey))
         {
-            _apiKeyValidation = apiKeyValidation;
+            context.Result = new UnauthorizedResult();
+
+            return;
         }
 
-        public void OnAuthorization(AuthorizationFilterContext context)
+        if (!apiKeyValidation.IsValidApiKeyAsync(userApiKey).Result)
         {
-            var userApiKey = context.HttpContext.Request.Headers[Constants.ApiKeyHeaderName];
-            if (string.IsNullOrEmpty(userApiKey))
-            {
-                context.Result = new UnauthorizedResult();
-
-                return;
-            }
-
-            if (!_apiKeyValidation.IsValidApiKeyAsync(userApiKey).Result)
-            {
-                context.Result = new UnauthorizedResult();
-            }
+            context.Result = new UnauthorizedResult();
         }
     }
 }
