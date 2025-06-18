@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Sensoring_API.Models;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 
 public class LitterControllerTests
 {
@@ -83,16 +85,24 @@ public class LitterControllerTests
     public async Task Read_WithNoFilters_ReturnsOkWithData()
     {
         // Arrange
-        var readDtos = new List<LitterReadDto>
-    {
-        new LitterReadDto
+
+        var litter = new Litter
         {
             Id = 1,
             TypeOfTrash = "Plastic",
             Location = "Park",
             Coordinates = [1.0f, 2.0f],
             Time = DateTime.Now
-        }
+
+        };
+
+        var readdto = new LitterReadDto(litter);
+
+
+        var readDtos = new List<LitterReadDto>
+    {
+            readdto
+
     };
 
         _mockUserManager.Setup(m => m.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
