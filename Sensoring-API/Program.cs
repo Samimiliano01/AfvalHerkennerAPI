@@ -7,7 +7,11 @@ using Sensoring_API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register Services
+// Listen on port 8080 on every ip address for azure.
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080); // Listen on 0.0.0.0:8080
+});
 
 // Api Key Authorization
 builder.Services.AddTransient<IApiKeyValidation, AdminKeyValidation>();
