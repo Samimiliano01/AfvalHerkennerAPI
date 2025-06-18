@@ -16,7 +16,7 @@ namespace Sensoring_API.ApiKeyAuth;
 /// </example>
 /// <seealso cref="IApiKeyValidation"/>
 /// <seealso cref="AdminApiKeyAttribute"/>
-public class AdminKeyAuthFilter(IApiKeyValidation apiKeyValidation) : IAuthorizationFilter
+public class AdminKeyAuthFilter(AdminKeyValidation apiKeyValidation) : IAuthorizationFilter
 {
     /// <summary>
     /// Invoked to perform authorization logic for incoming requests.
