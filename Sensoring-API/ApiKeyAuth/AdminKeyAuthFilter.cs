@@ -32,6 +32,7 @@ public class AdminKeyAuthFilter(AdminKeyValidation apiKeyValidation) : IAuthoriz
     {
         var userApiKey = context.HttpContext.Request.Headers[Constants.ApiKeyHeaderName];
         if (string.IsNullOrEmpty(userApiKey))
+
         {
             context.Result = new UnauthorizedResult();
 
