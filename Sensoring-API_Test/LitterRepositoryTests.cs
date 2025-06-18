@@ -4,9 +4,11 @@ using Sensoring_API.Dto;
 using Sensoring_API.Models;
 using Sensoring_API.Repositories;
 
+namespace Sensoring_API_Test;
+
 public class LitterRepositoryTests
 {
-    private LitterDbContext GetInMemoryDbContext()
+    private static LitterDbContext GetInMemoryDbContext()
     {
         var options = new DbContextOptionsBuilder<LitterDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
