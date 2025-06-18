@@ -2,11 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Sensoring_API.ApiKeyAuth;
 using Sensoring_API.Dto;
 using Sensoring_API.Repositories;
-// For authentication and authorization attributes
-// For controller base and HTTP action results
-// Data Transfer Objects used in API requests/responses
-
-// Repository interfaces and implementations
 
 namespace Sensoring_API.Controllers;
 
@@ -17,8 +12,8 @@ namespace Sensoring_API.Controllers;
 /// This controller contains actions to handle CRUD operations on litter data.
 /// Authentication and authorization are required for accessing its endpoints.
 /// </remarks>
-[ApiController]                           // Enable API-specific features like automatic model validation
-[Route("litters")]                      // Route prefix for this controller (endpoint path will start with /Litter)
+[ApiController]
+[Route("litters")]
 public class LitterController(ILitterRepository litterRepository) : ControllerBase
 {
     /// <summary>
@@ -116,7 +111,19 @@ public class LitterController(ILitterRepository litterRepository) : ControllerBa
             return StatusCode(500, $"An error occurred while retrieving litter: {ex.Message}");
         }
     }
-    
+
+    /// <summary>
+    /// Deletes a litter record with the specified ID.
+    /// </summary>
+    /// <param name="id">
+    /// The unique identifier of the litter record to be deleted. Must be a non-negative integer.
+    /// </param>
+    /// <returns>
+    /// An HTTP response indicating the result of the operation. Returns a status code of 200 with a success message if the deletion is successful.
+    /// Returns a status code of 400 with an error message if the ID is invalid.
+    /// Returns a status code of 404 with an error message if a litter record with the specified ID does not exist.
+    /// Returns a status code of 500 with an error message if an unexpected error occurs during the deletion process.
+    /// </returns>
     [AdminApiKey]
     [HttpDelete]
     public async Task<ActionResult> Delete([FromQuery] int id)
