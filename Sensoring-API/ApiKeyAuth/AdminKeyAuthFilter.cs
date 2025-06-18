@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Sensoring_API.Data;
 
 namespace Sensoring_API.ApiKeyAuth;
 
@@ -44,3 +45,4 @@ public class AdminKeyAuthFilter(IApiKeyValidation apiKeyValidation) : IAuthoriza
         }
     }
 }
+

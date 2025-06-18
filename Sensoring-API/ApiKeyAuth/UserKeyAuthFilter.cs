@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Sensoring_API.ApiKeyAuth;
+namespace Sensoring_API.ApiKeyAuth
+{
+    public class UserKeyAuthFilter : IAuthorizationFilter
+    {
+        private readonly IApiKeyValidation _apiKeyValidation;
 
 /// <summary>
 /// Implements an API key-based authorization filter for user-level validation.
